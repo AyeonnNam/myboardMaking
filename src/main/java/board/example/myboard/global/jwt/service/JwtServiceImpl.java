@@ -128,7 +128,6 @@ public class JwtServiceImpl implements JwtService{
         } catch(Exception e){
             log.error(e.getMessage());
             return Optional.empty();
-
         }
 
             }

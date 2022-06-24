@@ -1,4 +1,4 @@
-package board.example.myboard;
+package board.example.myboard.domain.Member;
 
 import board.example.myboard.domain.member.Member;
 import board.example.myboard.domain.member.Role;
@@ -99,8 +99,12 @@ class MemberRepositoryTest {
     @Test
     public void 성공_회원수정() throws Exception {
 
-        Member member = Member.builder().username("username").password("!23455ee5").name("Member1").nickname("nickname").role(Role.USER).age(22).build();
+        Member member = Member.builder().username("username")
+                .password("!23455ee5").name("Member1").nickname("nickname").role(Role.USER).age(22).build();
         memberRepository.save(member);
+
+        em.flush();
+        em.clear();
 
         String updatePassword = "updatePassword";
         String updateName = "updateName";

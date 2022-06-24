@@ -1,6 +1,8 @@
 package board.example.myboard.domain.member;
 
 import board.example.myboard.BaseTimeEntity;
+import board.example.myboard.domain.comment.service.Comment;
+import board.example.myboard.domain.comment.service.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name="MEMBER")
 @Getter
@@ -42,6 +46,23 @@ public class Member extends BaseTimeEntity {
     @Column(length=1000)
     private String refreshToken;
 
+    //회원탈퇴 -> 작성한 게시물, 댓글 모두 삭제//
+    @OneToMany(mappedBy = "writer",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> postList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    //연관관계 메서드//
+    public void addPost(Post post){
+        postList.add(post);
+    }
+
+    public void addComment(Comment comment){
+        commentList.add(comment);
+    }
+
+
     public void updateRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     }
@@ -62,6 +83,15 @@ public class Member extends BaseTimeEntity {
     public void updateNickname(String nickname){
         this.nickname = nickname;
 
+    }
+
+    public boolean matchPassword(PasswordEncoder passwordEncoder, String checkPassword){
+        return passwordEncoder.matches(checkPassword, getPassword());
+
+    }
+
+    public void addUserAuthority(){
+        this.role = Role.USER;
     }
 
     public void updateAge(int age){
